@@ -1,0 +1,119 @@
+# Default values for hello-world.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+monica:
+  env:
+    - name: APP_URL
+      value: "https://monica.takemoto.ai"
+    - name: APP_ENV
+      value: "production" # force HTTPS
+    - name: APP_TRUSTED_PROXIES
+      value: "*"
+    - name: APP_FORCE_URL
+      value: true
+    - name: DB_CONNECTION
+      value: "mysql"
+    - name: DB_HOST
+      value: "ohiamttsql.mysql.database.azure.com"
+    - name: DB_DATABASE
+      value: "monica"
+    - name: APP_DEBUG
+      value: "true"
+    - name: APP_KEY
+      valueFrom:
+        secretKeyRef:
+          key: monica-app-key
+          name: monicasecrets
+    - name: DB_USERNAME
+      valueFrom:
+        secretKeyRef:
+          key: monica-db-username
+          name: monicasecrets
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: monica-db-pass
+          name: monicasecrets
+  ingress:
+    main:
+      enabled: true
+      pathType: Prefix
+      hosts:
+        - host: monica.takemoto.ai
+          paths:
+            - path: /
+              service:
+  persistence:
+    config:
+      enabled: true
+      mountPath: /var/www/html/storage
+
+whoami:
+  ingress:
+    enabled: true
+    pathType: Prefix
+    hosts:
+      - host: whoami.takemoto.ai
+        paths:
+          - /
+
+traefik:
+  namespace: "traefik"
+  additionalArguments:
+    - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+    - --certificatesresolvers.cloudflare.acme.email=matt@takemoto.ai
+    - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+    - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+  env:
+    - name: CF_API_EMAIL
+      valueFrom:
+        secretKeyRef:
+          key: email
+          name: cloudflare-credentials
+    - name: CF_API_KEY
+      valueFrom:
+        secretKeyRef:
+          key: apiKey
+          name: cloudflare-credentials
+  ports:
+    web:
+      redirectTo: websecure
+    websecure:
+      tls:
+        enabled: true
+        certResolver: cloudflare
+
+  ingressRoute:
+    dashboard:
+      enabled: false
+
+  # Persistent Storage
+  persistence:
+    enabled: true
+    name: ssl-certs
+    size: 1Gi
+    path: /ssl-certs
+  deployment:
+    initContainers:
+      # The "volume-permissions" init container is required if you run into permission issues.
+      # Related issue: https://github.com/containous/traefik/issues/6972
+      - name: volume-permissions
+        image: busybox:1.31.1
+        command: ["sh", "-c", "chmod -Rv 600 /ssl-certs/*"]
+        volumeMounts:
+          - name: ssl-certs
+            mountPath: /ssl-certs
+  securityContext:
+    readOnlyRootFilesystem: false
+    runAsGroup: 0
+    runAsUser: 0
+    runAsNonRoot: false
+  ingressClass:
+    enabled: true
+    isDefaultClass: true
+
+kubernetes-dashboard:
+  resources:
+    limits:
+      cpu: "200m"
