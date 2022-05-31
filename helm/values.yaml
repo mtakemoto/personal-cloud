@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+## Monica
 monica:
   env:
     - name: APP_URL
@@ -49,6 +50,7 @@ monica:
       enabled: true
       mountPath: /var/www/html/storage
 
+## Whoami
 whoami:
   ingress:
     enabled: true
@@ -58,61 +60,117 @@ whoami:
         paths:
           - /
 
-traefik:
-  namespace: "traefik"
-  additionalArguments:
-    - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
-    - --certificatesresolvers.cloudflare.acme.email=matt@takemoto.ai
-    - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
-    - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
-  env:
-    - name: CF_API_EMAIL
-      valueFrom:
-        secretKeyRef:
-          key: email
-          name: cloudflare-credentials
-    - name: CF_API_KEY
-      valueFrom:
-        secretKeyRef:
-          key: apiKey
-          name: cloudflare-credentials
-  ports:
-    web:
-      redirectTo: websecure
-    websecure:
-      tls:
-        enabled: true
-        certResolver: cloudflare
+## Cert-manager
+cert-manager:
+  installCRDs: true
 
-  ingressRoute:
-    dashboard:
+## Pomerium
+pomerium:
+  authenticate:
+    ingress:
+      tls:
+        secretName: pomerium-tls
+    existingTLSSecret: pomerium-tls
+    idp:
+      provider: "auth0"
+      url: "takemoto.us.auth0.com"
+      clientID:
+      clientSecret:
+    proxied: false
+
+  proxy:
+    existingTLSSecret: pomerium-tls
+
+  databroker:
+    existingTLSSecret: pomerium-tls
+    storage:
+      connectionString: rediss://pomerium-redis-master.pomerium.svc.cluster.local
+      type: redis
+      clientTLS:
+        existingSecretName: pomerium-tls
+        existingCASecretKey: ca.crt
+
+  authorize:
+    existingTLSSecret: pomerium-tls
+
+  redis:
+    enabled: true
+    auth:
       enabled: false
+    usePassword: false
+    generateTLS: false
+    tls:
+      certificateSecret: pomerium-redis-tls
+
+  ingressController:
+    enabled: true
+
+  ingress:
+    enabled: false
+
+  config:
+    rootDomain: takemoto.ai
+    existingCASecret: pomerium-tls
+    generateTLS: false # On by default, disabled when cert-manager or another solution is in place.
+
+
+## Traefik
+# traefik:
+#   namespace: "traefik"
+#   additionalArguments:
+#     - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+#     - --certificatesresolvers.cloudflare.acme.email=matt@takemoto.ai
+#     - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+#     - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+#   env:
+#     - name: CF_API_EMAIL
+#       valueFrom:
+#         secretKeyRef:
+#           key: email
+#           name: cloudflare-credentials
+#     - name: CF_API_KEY
+#       valueFrom:
+#         secretKeyRef:
+#           key: apiKey
+#           name: cloudflare-credentials
+#   ports:
+#     web:
+#       redirectTo: websecure
+#     websecure:
+#       # tls:
+#       #   enabled: true
+#       #   certResolver: cloudflare
+
+#   ingressRoute:
+#     dashboard:
+#       enabled: false
 
   # Persistent Storage
-  persistence:
-    enabled: true
-    name: ssl-certs
-    size: 1Gi
-    path: /ssl-certs
-  deployment:
-    initContainers:
-      # The "volume-permissions" init container is required if you run into permission issues.
-      # Related issue: https://github.com/containous/traefik/issues/6972
-      - name: volume-permissions
-        image: busybox:1.31.1
-        command: ["sh", "-c", "chmod -Rv 600 /ssl-certs/*"]
-        volumeMounts:
-          - name: ssl-certs
-            mountPath: /ssl-certs
-  securityContext:
-    readOnlyRootFilesystem: false
-    runAsGroup: 0
-    runAsUser: 0
-    runAsNonRoot: false
-  ingressClass:
-    enabled: true
-    isDefaultClass: true
+  # persistence:
+  #   enabled: true
+  #   name: ssl-certs
+  #   size: 1Gi
+  #   path: /ssl-certs
+  # deployment:
+  #   initContainers:
+  #     # The "volume-permissions" init container is required if you run into permission issues.
+  #     # Related issue: https://github.com/containous/traefik/issues/6972
+  #     - name: volume-permissions
+  #       image: busybox:1.31.1
+  #       command: ["sh", "-c", "chmod -Rv 600 /ssl-certs/*"]
+  #       volumeMounts:
+  #         - name: ssl-certs
+  #           mountPath: /ssl-certs
+  # securityContext:
+  #   readOnlyRootFilesystem: false
+  #   runAsGroup: 0
+  #   runAsUser: 0
+  #   runAsNonRoot: false
+  # ingressClass:
+  #   enabled: true
+  #   isDefaultClass: true
 
+## Kube dashboard
 kubernetes-dashboard:
   resources:
     limits:

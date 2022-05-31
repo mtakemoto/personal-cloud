@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: takemoto-ai
+  namespace: default
+spec:
+  commonName: '*.takemoto.ai'
+  secretName: takemoto-ai-tls
+  dnsNames:
+    - takemoto.ai
+    - '*.takemoto.ai'
+  issuerRef:
+    name: cloudflare-letsencrypt
+    kind: ClusterIssuer

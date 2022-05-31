@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whoami
+  annotations:
+    cert-manager.io/issuer: cloudflare-letsencrypt
+    ingress.pomerium.io/policy: '[{"allow":{"and":[{"domain":{"is":"takemoto.ai"}}]}}]'
+spec:
+  ingressClassName: pomerium
+  rules:
+  - host: whoami.takemoto.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: whoami
+            port:
+              number: 80
+  tls:
+    - hosts:
+        - whoami.takemoto.ai
+      secretName: takemoto-ai-tls

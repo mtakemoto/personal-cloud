@@ -1,0 +1,8 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: pomerium-issuer
+  namespace: default
+spec:
+  ca:
+    secretName: pomerium-tls-ca

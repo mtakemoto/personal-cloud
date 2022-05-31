@@ -43,3 +43,7 @@ dependencies:
   - name: pomerium
     version: "31.1.4"
     repository: "https://helm.pomerium.io"
+
+  - name: cert-manager
+    version: "1.8.0"
+    repository: "https://charts.jetstack.io"

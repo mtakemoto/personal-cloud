@@ -1,0 +1,36 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pomerium-cert
+  namespace: default
+spec:
+  secretName: pomerium-tls
+  issuerRef:
+    name: pomerium-issuer
+    kind: Issuer
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - pomerium-proxy.default.svc.cluster.local
+    - pomerium-authorize.default.svc.cluster.local
+    - pomerium-databroker.default.svc.cluster.local
+    - pomerium-authenticate.default.svc.cluster.local
+    - authenticate.takemoto.ai
+    # TODO - If you're not using the Pomerium Ingress controller, you may want a wildcard entry as well.
+    #- "*.localhost.pomerium.io" # Quotes are required to escape the wildcard
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pomerium-redis-cert
+  namespace: default
+spec:
+  secretName: pomerium-redis-tls
+  issuerRef:
+    name: pomerium-issuer
+    kind: Issuer
+  dnsNames:
+    - pomerium-redis-master.default.svc.cluster.local
+    - pomerium-redis-headless.default.svc.cluster.local
+    - pomerium-redis-replicas.default.svc.cluster.local
