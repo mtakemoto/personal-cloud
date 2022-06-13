@@ -36,47 +36,31 @@ monica:
         secretKeyRef:
           key: monica-db-pass
           name: monicasecrets
-  ingress:
-    main:
-      enabled: true
-      pathType: Prefix
-      hosts:
-        - host: monica.takemoto.ai
-          paths:
-            - path: /
-              service:
   persistence:
     config:
       enabled: true
       mountPath: /var/www/html/storage
 
-## Whoami
-whoami:
-  ingress:
-    enabled: true
-    pathType: Prefix
-    hosts:
-      - host: whoami.takemoto.ai
-        paths:
-          - /
-
 ## Cert-manager
 cert-manager:
-  installCRDs: true
+  installCRDs: false
 
 ## Pomerium
 pomerium:
+  extraEnvFrom:
+  - secretRef:
+      name: auth0-pomerium-credentials
+
   authenticate:
-    ingress:
-      tls:
-        secretName: pomerium-tls
     existingTLSSecret: pomerium-tls
+    ingress:
+      annotations:
+        cert-manager.io/issuer: cloudflare-letsencrypt-prod
+      tls:
+        secretName: takemoto-ai-cert
     idp:
       provider: "auth0"
-      url: "takemoto.us.auth0.com"
-      clientID:
-      clientSecret:
-    proxied: false
+      url: "https://takemoto.us.auth0.com"
 
   proxy:
     existingTLSSecret: pomerium-tls
@@ -84,10 +68,10 @@ pomerium:
   databroker:
     existingTLSSecret: pomerium-tls
     storage:
-      connectionString: rediss://pomerium-redis-master.pomerium.svc.cluster.local
+      connectionString: "rediss://ape-mars-redis-master.default.svc.cluster.local"
       type: redis
       clientTLS:
-        existingSecretName: pomerium-tls
+        existingSecretName: pomerium-redis-tls
         existingCASecretKey: ca.crt
 
   authorize:
@@ -112,63 +96,8 @@ pomerium:
     rootDomain: takemoto.ai
     existingCASecret: pomerium-tls
     generateTLS: false # On by default, disabled when cert-manager or another solution is in place.
-
-
-## Traefik
-# traefik:
-#   namespace: "traefik"
-#   additionalArguments:
-#     - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
-#     - --certificatesresolvers.cloudflare.acme.email=matt@takemoto.ai
-#     - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
-#     - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
-#   env:
-#     - name: CF_API_EMAIL
-#       valueFrom:
-#         secretKeyRef:
-#           key: email
-#           name: cloudflare-credentials
-#     - name: CF_API_KEY
-#       valueFrom:
-#         secretKeyRef:
-#           key: apiKey
-#           name: cloudflare-credentials
-#   ports:
-#     web:
-#       redirectTo: websecure
-#     websecure:
-#       # tls:
-#       #   enabled: true
-#       #   certResolver: cloudflare
-
-#   ingressRoute:
-#     dashboard:
-#       enabled: false
-
-  # Persistent Storage
-  # persistence:
-  #   enabled: true
-  #   name: ssl-certs
-  #   size: 1Gi
-  #   path: /ssl-certs
-  # deployment:
-  #   initContainers:
-  #     # The "volume-permissions" init container is required if you run into permission issues.
-  #     # Related issue: https://github.com/containous/traefik/issues/6972
-  #     - name: volume-permissions
-  #       image: busybox:1.31.1
-  #       command: ["sh", "-c", "chmod -Rv 600 /ssl-certs/*"]
-  #       volumeMounts:
-  #         - name: ssl-certs
-  #           mountPath: /ssl-certs
-  # securityContext:
-  #   readOnlyRootFilesystem: false
-  #   runAsGroup: 0
-  #   runAsUser: 0
-  #   runAsNonRoot: false
-  # ingressClass:
-  #   enabled: true
-  #   isDefaultClass: true
+    generateSigningKey: true
+    forceGenerateSigningKey: false
 
 ## Kube dashboard
 kubernetes-dashboard:

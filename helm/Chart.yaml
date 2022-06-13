@@ -24,10 +24,6 @@ version: 0.0.1
 appVersion: "0.0.1"
 
 dependencies:
-  - name: traefik
-    version: "10.15.0"
-    repository: "https://helm.traefik.io/traefik"
-
   - name: monica
     version: "7.2.2"
     repository: "https://k8s-at-home.com/charts"

@@ -1,7 +1,8 @@
+## For some reason, secrets have to be mounted in here before they show up as available for access
 kind: Pod
 apiVersion: v1
 metadata:
-  name: busybox-secrets-store-inline
+  name: {{ .Release.Name }}-busybox-secrets-store-inline
   namespace: {{ .Release.Namespace }}
 spec:
   containers:
@@ -14,6 +15,9 @@ spec:
       - name: secrets-store01-inline
         mountPath: "/mnt/secrets-store"
         readOnly: true
+      envFrom:
+      - secretRef:
+          name: auth0-pomerium-credentials
       env:
       - name: MONICA_DB_USERNAME
         valueFrom:

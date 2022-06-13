@@ -1,0 +1,23 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: cloudflare-letsencrypt-prod
+  namespace: {{ .Release.Namespace }}
+spec:
+  acme:
+    # TODO: variable extract
+    # TODO: change to prod
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: matt@takemoto.ai
+    privateKeySecretRef:
+      name: cloudflare-letsencrypt-prod
+    solvers:
+    - dns01:
+        cloudflare:
+          email: matt@takemoto.ai
+          apiKeySecretRef:
+            name: cloudflare-credentials
+            key: apiKey
+      selector:
+        dnsZones:
+          - 'takemoto.ai'

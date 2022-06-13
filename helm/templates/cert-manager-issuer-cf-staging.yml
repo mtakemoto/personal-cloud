@@ -1,8 +1,8 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata:
-  name: cloudflare-letsencrypt
-  namespace: default
+  name: cloudflare-letsencrypt-staging
+  namespace: {{ .Release.Namespace }}
 spec:
   acme:
     # TODO: variable extract
@@ -10,14 +10,14 @@ spec:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     email: matt@takemoto.ai
     privateKeySecretRef:
-      name: cloudflare-letsencrypt-pk
+      name: cloudflare-letsencrypt-staging
     solvers:
     - dns01:
         cloudflare:
           email: matt@takemoto.ai
-          apiTokenSecretRef:
+          apiKeySecretRef:
             name: cloudflare-credentials
-            key: cloudflare-apiKey
+            key: apiKey
       selector:
         dnsZones:
           - 'takemoto.ai'

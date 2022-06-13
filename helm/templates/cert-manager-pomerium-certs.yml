@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: pomerium-cert
-  namespace: default
+  namespace: {{ .Release.Namespace }}
 spec:
   secretName: pomerium-tls
   issuerRef:
@@ -12,11 +12,10 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - pomerium-proxy.default.svc.cluster.local
-    - pomerium-authorize.default.svc.cluster.local
-    - pomerium-databroker.default.svc.cluster.local
-    - pomerium-authenticate.default.svc.cluster.local
-    - authenticate.takemoto.ai
+    - {{ .Release.Name }}-pomerium-proxy.default.svc.cluster.local
+    - {{ .Release.Name }}-pomerium-authorize.default.svc.cluster.local
+    - {{ .Release.Name }}-pomerium-databroker.default.svc.cluster.local
+    - {{ .Release.Name }}-pomerium-authenticate.default.svc.cluster.local
     # TODO - If you're not using the Pomerium Ingress controller, you may want a wildcard entry as well.
     #- "*.localhost.pomerium.io" # Quotes are required to escape the wildcard
 ---
@@ -24,13 +23,13 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: pomerium-redis-cert
-  namespace: default
+  namespace: {{ .Release.Namespace }}
 spec:
   secretName: pomerium-redis-tls
   issuerRef:
     name: pomerium-issuer
     kind: Issuer
   dnsNames:
-    - pomerium-redis-master.default.svc.cluster.local
-    - pomerium-redis-headless.default.svc.cluster.local
-    - pomerium-redis-replicas.default.svc.cluster.local
+    - {{ .Release.Name }}-redis-master.default.svc.cluster.local
+    - {{ .Release.Name }}-redis-headless.default.svc.cluster.local
+    - {{ .Release.Name }}-redis-replicas.default.svc.cluster.local

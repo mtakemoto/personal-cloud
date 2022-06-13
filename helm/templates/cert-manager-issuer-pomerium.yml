@@ -1,8 +1,29 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
+metadata:
+  name: pomerium-ca
+  namespace: {{ .Release.Namespace }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pomerium-ca
+  namespace: {{ .Release.Namespace }}
+spec:
+  isCA: true
+  secretName: pomerium-ca
+  commonName: pomerium ca
+  issuerRef:
+    name: pomerium-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
 metadata:
   name: pomerium-issuer
-  namespace: default
+  namespace: {{ .Release.Namespace }}
 spec:
   ca:
-    secretName: pomerium-tls-ca
+    secretName: pomerium-ca
