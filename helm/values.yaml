@@ -36,6 +36,32 @@ monica:
         secretKeyRef:
           key: monica-db-pass
           name: monicasecrets
+    - name: MAIL_MAILER
+      value: smtp
+    - name: MAIL_HOST
+      value: ape-mars-protonmail-bridge.default.svc.cluster.local
+    - name: MAIL_PORT
+      value: 25
+    - name: MAIL_USERNAME
+      valueFrom:
+        secretKeyRef:
+          key: username
+          name: smtp-credentials
+    - name: MAIL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: password
+          name: smtp-credentials
+    - name: MAIL_ENCRYPTION
+      value: null
+    - name: MAIL_FROM_ADDRESS
+      valueFrom:
+        secretKeyRef:
+          key: username
+          name: smtp-credentials
+    - name: MAIL_FROM_NAME
+      value: "Monica"
+
   persistence:
     config:
       enabled: true
@@ -44,6 +70,17 @@ monica:
 ## Cert-manager
 cert-manager:
   installCRDs: false
+
+protonmail-bridge:
+  service:
+    main:
+      ports:
+        http:
+          enabled: false
+        smtp:
+          enabled: true
+          protocol: TCP
+          port: 25
 
 ## Pomerium
 pomerium:

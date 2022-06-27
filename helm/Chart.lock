@@ -1,10 +1,10 @@
 dependencies:
-- name: traefik
-  repository: https://helm.traefik.io/traefik
-  version: 10.15.0
 - name: monica
   repository: https://k8s-at-home.com/charts
   version: 7.2.2
+- name: protonmail-bridge
+  repository: https://k8s-at-home.com/charts
+  version: 5.3.2
 - name: kubernetes-dashboard
   repository: https://kubernetes.github.io/dashboard/
   version: 5.3.1
@@ -17,5 +17,5 @@ dependencies:
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.8.0
-digest: sha256:6015b8c3ab8e9070b3f2e864d9bf3909cf5db0e52b6954610baf2b49483091c6
-generated: "2022-05-30T13:14:53.7515406-07:00"
+digest: sha256:3531fab7f6ec6ddf0968c2547f5e50158cd401000a0c8b329d42377a2673536c
+generated: "2022-06-25T23:46:34.5981794-07:00"

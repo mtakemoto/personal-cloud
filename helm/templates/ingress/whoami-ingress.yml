@@ -4,6 +4,7 @@ metadata:
   name: whoami
   annotations:
     cert-manager.io/issuer: cloudflare-letsencrypt-prod
+    ingress.pomerium.io/pass_identity_headers: "true"
     ingress.pomerium.io/policy: '[{"allow":{"and":[{"domain":{"is":"takemoto.ai"}}]}}]'
 spec:
   ingressClassName: pomerium

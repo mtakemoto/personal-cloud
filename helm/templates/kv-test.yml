@@ -18,6 +18,8 @@ spec:
       envFrom:
       - secretRef:
           name: auth0-pomerium-credentials
+      - secretRef:
+          name: smtp-credentials
       env:
       - name: MONICA_DB_USERNAME
         valueFrom:
