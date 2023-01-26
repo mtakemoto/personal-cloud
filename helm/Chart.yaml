@@ -25,7 +25,7 @@ appVersion: "0.0.1"
 
 dependencies:
   - name: monica
-    version: "7.2.2"
+    version: "8.1.2"
     repository: "https://k8s-at-home.com/charts"
 
   - name: protonmail-bridge
@@ -40,10 +40,10 @@ dependencies:
     version: "2.5.5"
     repository: "https://cowboysysop.github.io/charts/"
 
-  - name: pomerium
-    version: "31.1.4"
-    repository: "https://helm.pomerium.io"
-
   - name: cert-manager
     version: "1.8.0"
     repository: "https://charts.jetstack.io"
+
+  - name: grafana-agent-operator
+    version: "0.2.3"
+    repository: "https://grafana.github.io/helm-charts"

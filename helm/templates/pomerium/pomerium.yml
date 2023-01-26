@@ -1,0 +1,14 @@
+apiVersion: ingress.pomerium.io/v1
+kind: Pomerium
+metadata:
+  name: global
+spec:
+  secrets: pomerium/bootstrap
+  authenticate:
+      url: https://authenticate.takemoto.ai
+  identityProvider:
+      provider: auth0
+      url: "https://takemoto.us.auth0.com"
+      secret: default/auth0-pomerium-credentials
+  certificates:
+      - default/takemoto-ai-cert

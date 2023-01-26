@@ -12,6 +12,9 @@ provider "azurerm" {
   features {}
 }
 
+
+#---------Data-------------------
+
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "pcloud_rg" {
@@ -159,8 +162,8 @@ resource "azurerm_mysql_flexible_database" "monica" {
   name                = "monica"
   resource_group_name = azurerm_resource_group.pcloud_rg.name
   server_name         = azurerm_mysql_flexible_server.mysql.name
-  charset             = "utf8"
-  collation           = "utf8_unicode_ci"
+  charset             = "utf8mb4"
+  collation           = "utf8mb4_unicode_ci"
 }
 
 #------------------------

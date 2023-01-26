@@ -1,7 +1,7 @@
 dependencies:
 - name: monica
   repository: https://k8s-at-home.com/charts
-  version: 7.2.2
+  version: 8.1.2
 - name: protonmail-bridge
   repository: https://k8s-at-home.com/charts
   version: 5.3.2
@@ -13,9 +13,12 @@ dependencies:
   version: 2.5.5
 - name: pomerium
   repository: https://helm.pomerium.io
-  version: 31.1.4
+  version: 33.0.1
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.8.0
-digest: sha256:3531fab7f6ec6ddf0968c2547f5e50158cd401000a0c8b329d42377a2673536c
-generated: "2022-06-25T23:46:34.5981794-07:00"
+- name: grafana-agent-operator
+  repository: https://grafana.github.io/helm-charts
+  version: 0.2.3
+digest: sha256:a8fbb891441c61832ca83d9b8f53e058fad8c3212faa97e8e29a06de8e7315f5
+generated: "2022-11-23T14:24:27.2412619-08:00"

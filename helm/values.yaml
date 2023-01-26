@@ -39,7 +39,7 @@ monica:
     - name: MAIL_MAILER
       value: smtp
     - name: MAIL_HOST
-      value: ape-mars-protonmail-bridge.default.svc.cluster.local
+      value: moon-3-protonmail-bridge.default.svc.cluster.local
     - name: MAIL_PORT
       value: 25
     - name: MAIL_USERNAME
@@ -83,58 +83,58 @@ protonmail-bridge:
           port: 25
 
 ## Pomerium
-pomerium:
-  extraEnvFrom:
-  - secretRef:
-      name: auth0-pomerium-credentials
+# pomerium:
+#   extraEnvFrom:
+#   - secretRef:
+#       name: auth0-pomerium-credentials
 
-  authenticate:
-    existingTLSSecret: pomerium-tls
-    ingress:
-      annotations:
-        cert-manager.io/issuer: cloudflare-letsencrypt-prod
-      tls:
-        secretName: takemoto-ai-cert
-    idp:
-      provider: "auth0"
-      url: "https://takemoto.us.auth0.com"
+#   authenticate:
+#     existingTLSSecret: pomerium-tls
+#     ingress:
+#       annotations:
+#         cert-manager.io/issuer: cloudflare-letsencrypt-prod
+#       tls:
+#         secretName: takemoto-ai-cert
+#     idp:
+#       provider: "auth0"
+#       url: "https://takemoto.us.auth0.com"
 
-  proxy:
-    existingTLSSecret: pomerium-tls
+#   proxy:
+#     existingTLSSecret: pomerium-tls
 
-  databroker:
-    existingTLSSecret: pomerium-tls
-    storage:
-      connectionString: "rediss://ape-mars-redis-master.default.svc.cluster.local"
-      type: redis
-      clientTLS:
-        existingSecretName: pomerium-redis-tls
-        existingCASecretKey: ca.crt
+#   databroker:
+#     existingTLSSecret: pomerium-tls
+#     storage:
+#       connectionString: "rediss://moon-3-redis-master.default.svc.cluster.local"
+#       type: redis
+#       clientTLS:
+#         existingSecretName: pomerium-redis-tls
+#         existingCASecretKey: ca.crt
 
-  authorize:
-    existingTLSSecret: pomerium-tls
+#   authorize:
+#     existingTLSSecret: pomerium-tls
 
-  redis:
-    enabled: true
-    auth:
-      enabled: false
-    usePassword: false
-    generateTLS: false
-    tls:
-      certificateSecret: pomerium-redis-tls
+#   redis:
+#     enabled: true
+#     auth:
+#       enabled: false
+#     usePassword: false
+#     generateTLS: false
+#     tls:
+#       certificateSecret: pomerium-redis-tls
 
-  ingressController:
-    enabled: true
+#   ingressController:
+#     enabled: true
 
-  ingress:
-    enabled: false
+#   ingress:
+#     enabled: true
 
-  config:
-    rootDomain: takemoto.ai
-    existingCASecret: pomerium-tls
-    generateTLS: false # On by default, disabled when cert-manager or another solution is in place.
-    generateSigningKey: true
-    forceGenerateSigningKey: false
+#   config:
+#     rootDomain: takemoto.ai
+#     existingCASecret: pomerium-tls
+#     generateTLS: false # On by default, disabled when cert-manager or another solution is in place.
+#     generateSigningKey: true
+#     forceGenerateSigningKey: false
 
 ## Kube dashboard
 kubernetes-dashboard:

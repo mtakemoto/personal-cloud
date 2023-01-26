@@ -1,7 +1,7 @@
-module "domain" {
-    source = "./domain"
-    domain_name = "takemoto.ai"
-}
+# module "domain" {
+#     source = "./domain"
+#     domain_name = "takemoto.ai"
+# }
 
 module "azure" {
     source = "./azure"
@@ -10,5 +10,5 @@ module "azure" {
     kv_name = "ohiakvprod"
     k8s_cluster_name = "ohia"
     k8s_vm_size = "standard_b2s"
-    k8s_node_count = 2
+    k8s_node_count = 1
 }
